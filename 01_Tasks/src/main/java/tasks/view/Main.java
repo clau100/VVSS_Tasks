@@ -18,14 +18,14 @@ import java.io.IOException;
 
 public class Main extends Application {
     public static Stage primaryStage;
-    private static final int defaultWidth = 820;
-    private static final int defaultHeight = 520;
+    private static final int DEFAULT_WIDTH = 820;
+    private static final int DEFAULT_HEIGHT = 520;
     private static final Logger log = Logger.getLogger(Main.class.getName());
 
     private ArrayTaskList savedTasksList = new ArrayTaskList();
 
     private static ClassLoader classLoader = Main.class.getClassLoader();
-    public static File savedTasksFile = new File("data/tasks.txt");
+    public final static File savedTasksFile = new File("data/tasks.txt");
 
     private TasksService service = new TasksService(savedTasksList);//savedTasksList);
 
@@ -45,9 +45,9 @@ public class Main extends Application {
 
             ctrl.setService(service);
             primaryStage.setTitle("Task Manager");
-            primaryStage.setScene(new Scene(root, defaultWidth, defaultHeight));
-            primaryStage.setMinWidth(defaultWidth);
-            primaryStage.setMinHeight(defaultHeight);
+            primaryStage.setScene(new Scene(root, DEFAULT_WIDTH, DEFAULT_HEIGHT));
+            primaryStage.setMinWidth(DEFAULT_WIDTH);
+            primaryStage.setMinHeight(DEFAULT_HEIGHT);
             primaryStage.show();
         }
         catch (IOException e){

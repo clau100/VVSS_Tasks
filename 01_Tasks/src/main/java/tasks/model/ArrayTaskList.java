@@ -1,19 +1,19 @@
 package tasks.model;
 
-
 import org.apache.log4j.Logger;
-
 import java.util.*;
 
-public class ArrayTaskList extends TaskList{
+public class ArrayTaskList extends TaskList {
 
     private Task[] tasks;
     private int numberOfTasks;
     private int currentCapacity;
     private static final Logger log = Logger.getLogger(ArrayTaskList.class.getName());
+
     private class ArrayTaskListIterator implements Iterator<Task> {
         private int cursor;
         private int lastCalled = -1;
+
         @Override
         public boolean hasNext() {
             return cursor < numberOfTasks;
@@ -21,7 +21,7 @@ public class ArrayTaskList extends TaskList{
 
         @Override
         public Task next() {
-            if (!hasNext()){
+            if (!hasNext()) {
                 log.error("next iterator element doesn't exist");
                 throw new NoSuchElementException("No next element");
             }
@@ -31,7 +31,7 @@ public class ArrayTaskList extends TaskList{
 
         @Override
         public void remove() {
-            if (lastCalled == -1){
+            if (lastCalled == -1) {
                 throw new IllegalStateException();
             }
             ArrayTaskList.this.remove(getTask(lastCalled));
@@ -39,9 +39,24 @@ public class ArrayTaskList extends TaskList{
             lastCalled = -1;
         }
     }
-    public ArrayTaskList(){
+
+    public ArrayTaskList() {
         currentCapacity = 10;
         this.tasks = new Task[currentCapacity];
+    }
+
+    // 🔹 Factory Method for Copying (Replaces clone and copy constructor)
+    public static ArrayTaskList copyOf(ArrayTaskList other) {
+        ArrayTaskList copy = new ArrayTaskList();
+        copy.currentCapacity = other.currentCapacity;
+        copy.numberOfTasks = other.numberOfTasks;
+        copy.tasks = new Task[copy.currentCapacity];
+
+        for (int i = 0; i < copy.numberOfTasks; i++) {
+            copy.tasks[i] = other.tasks[i]; // Shallow copy (modify for deep copy if needed)
+        }
+
+        return copy;
     }
 
     @Override
@@ -50,53 +65,54 @@ public class ArrayTaskList extends TaskList{
     }
 
     @Override
-    public void add(Task task){
-        if (task.equals(null)) throw new NullPointerException("Task shouldn't be null");
-        if (numberOfTasks == currentCapacity-1){
+    public void add(Task task) {
+        if (task == null) throw new NullPointerException("Task shouldn't be null");
+        if (numberOfTasks == currentCapacity - 1) {
             currentCapacity = currentCapacity * 2;
             Task[] withAddedTask = new Task[currentCapacity];
-            System.arraycopy(tasks,0,withAddedTask,0,tasks.length);
+            System.arraycopy(tasks, 0, withAddedTask, 0, tasks.length);
             this.tasks = withAddedTask;
         }
         this.tasks[numberOfTasks] = task;
         this.numberOfTasks++;
     }
+
     @Override
-    public boolean remove(Task task){
+    public boolean remove(Task task) {
         int indexOfTaskToDelete = -1;
-        for(int i = 0; i < tasks.length; i++){
-            if (task.equals(tasks[i])){
+        for (int i = 0; i < numberOfTasks; i++) {
+            if (task.equals(tasks[i])) {
                 indexOfTaskToDelete = i;
                 break;
             }
         }
-        if (indexOfTaskToDelete >= 0){
+        if (indexOfTaskToDelete >= 0) {
             this.numberOfTasks--;
-            System.arraycopy(tasks, indexOfTaskToDelete+1,tasks,indexOfTaskToDelete,
-                    numberOfTasks-indexOfTaskToDelete+1);
+            System.arraycopy(tasks, indexOfTaskToDelete + 1, tasks, indexOfTaskToDelete,
+                    numberOfTasks - indexOfTaskToDelete);
             return true;
         }
         return false;
     }
+
     @Override
-    public int size(){
+    public int size() {
         return this.numberOfTasks;
     }
+
     @Override
-    public Task getTask(int index){
-        if (index < 0 || index > size()-1) {
+    public Task getTask(int index) {
+        if (index < 0 || index >= size()) {
             log.error("not existing index");
             throw new IndexOutOfBoundsException("Index not found");
         }
-
-
         return tasks[index];
     }
 
     @Override
     public List<Task> getAll() {
-        ArrayList<Task> tks=new ArrayList<>();
-        for (int i=0; i<this.numberOfTasks;i++)
+        ArrayList<Task> tks = new ArrayList<>();
+        for (int i = 0; i < this.numberOfTasks; i++)
             tks.add(this.tasks[i]);
         return tks;
     }
@@ -110,8 +126,8 @@ public class ArrayTaskList extends TaskList{
 
         if (numberOfTasks != that.numberOfTasks) return false;
         int i = 0;
-        for (Task a : this){
-            if (!a.equals(((ArrayTaskList) o).getTask(i))){
+        for (Task a : this) {
+            if (!a.equals(that.getTask(i))) {
                 return false;
             }
             i++;
@@ -134,14 +150,5 @@ public class ArrayTaskList extends TaskList{
                 ", numberOfTasks=" + numberOfTasks +
                 ", currentCapacity=" + currentCapacity +
                 '}';
-    }
-    @Override
-    protected ArrayTaskList clone() throws CloneNotSupportedException {
-        ArrayTaskList tasks = new ArrayTaskList();
-        for (int i = 0; i < this.tasks.length; i++){
-            tasks.add(this.getTask(i));
-        }
-        return tasks;
-
     }
 }
