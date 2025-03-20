@@ -81,7 +81,17 @@ public class Controller {
     }
 
     @FXML
-    public void showTaskDialog(ActionEvent actionEvent){
+    public void showNewDialog(ActionEvent actionEvent) {
+        showTaskDialog(actionEvent, false);
+    }
+
+    @FXML
+    public void showEditDialog(ActionEvent actionEvent) {
+        showTaskDialog(actionEvent, true);
+    }
+
+    @FXML
+    public void showTaskDialog(ActionEvent actionEvent, boolean edit) {
         Object source = actionEvent.getSource();
         NewEditController.setClickedButton((Button) source);
 
@@ -93,7 +103,9 @@ public class Controller {
             NewEditController editCtrl = loader.getController();
             editCtrl.setService(service);
             editCtrl.setTasksList(tasksList);
-            editCtrl.setCurrentTask((Task)mainTable.getSelectionModel().getSelectedItem());
+            if (edit) {
+                editCtrl.setCurrentTask((Task) mainTable.getSelectionModel().getSelectedItem());
+            }
             editNewStage.setScene(new Scene(root, 600, 350));
             editNewStage.setResizable(false);
             editNewStage.initOwner(Main.primaryStage);
@@ -129,8 +141,16 @@ public class Controller {
     }
     @FXML
     public void showFilteredTasks(){
+        if (datePickerFrom.getValue() == null || datePickerTo.getValue() == null) {
+            log.error("Date pickers are empty");
+            return;
+        }
         Date start = getDateFromFilterField(datePickerFrom.getValue(), fieldTimeFrom.getText());
         Date end = getDateFromFilterField(datePickerTo.getValue(), fieldTimeTo.getText());
+        if (start == null || end == null) {
+            log.error("Failed to filter because of invalid input");
+            return;
+        }
 
         Iterable<Task> filtered =  service.filterTasks(start, end);
 
@@ -140,7 +160,14 @@ public class Controller {
     }
     private Date getDateFromFilterField(LocalDate localDate, String time){
         Date date = dateService.getDateValueFromLocalDate(localDate);
-        return dateService.getDateMergedWithTime(time, date);
+        try {
+            Date finalDate = dateService.getDateMergedWithTime(time, date);
+            return finalDate;
+        }
+        catch (IllegalArgumentException e) {
+            log.error(e);
+        }
+        return null;
     }
 
 

@@ -78,7 +78,9 @@ public class TaskIO {
             log.error("IO exception reading or writing file");
         }
         finally {
-            fos.close();
+            if (fos != null) {
+                fos.close();
+            }
         }
     }
 
