@@ -43,6 +43,7 @@ public class ArrayTaskList extends TaskList {
     public ArrayTaskList() {
         currentCapacity = 10;
         this.tasks = new Task[currentCapacity];
+        this.numberOfTasks = 0;
     }
 
     // 🔹 Factory Method for Copying (Replaces clone and copy constructor)

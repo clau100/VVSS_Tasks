@@ -13,6 +13,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.log4j.Logger;
+import tasks.model.ArrayTaskList;
 import tasks.model.Task;
 import tasks.services.DateService;
 import tasks.services.TaskIO;
@@ -65,6 +66,7 @@ public class Controller {
         tasksList.addListener((ListChangeListener.Change<? extends Task> c) -> {
                     updateCountLabel(tasksList);
                     tasks.setItems(tasksList);
+                    service.setNewTaskList(tasksList);
                 }
         );
     }

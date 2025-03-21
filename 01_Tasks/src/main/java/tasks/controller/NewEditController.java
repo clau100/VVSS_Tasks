@@ -21,6 +21,7 @@ import tasks.services.TasksService;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.Objects;
 
 public class NewEditController {
 
@@ -189,6 +190,9 @@ public class NewEditController {
     private Task makeTask(){
         Task result;
         String newTitle = fieldTitle.getText();
+        if (Objects.equals(newTitle, "")) {
+            throw new IllegalArgumentException("Title should not be empty");
+        }
         Date startDateWithNoTime = dateService.getDateValueFromLocalDate(datePickerStart.getValue());//ONLY date!!without time
         Date newStartDate = dateService.getDateMergedWithTime(txtFieldTimeStart.getText(), startDateWithNoTime);
         if (checkBoxRepeated.isSelected()){
