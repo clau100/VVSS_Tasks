@@ -5,7 +5,7 @@ import org.apache.log4j.Logger;
 import tasks.model.LinkedTaskList;
 import tasks.model.Task;
 import tasks.model.TaskList;
-import tasks.view.*;
+import tasks.Main;
 
 import java.io.*;
 import java.text.ParseException;
