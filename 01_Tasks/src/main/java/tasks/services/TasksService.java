@@ -2,6 +2,7 @@ package tasks.services;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.apache.log4j.Logger;
 import tasks.model.ArrayTaskList;
 import tasks.model.Task;
 import tasks.model.TasksOperations;
@@ -12,6 +13,8 @@ public class TasksService {
 
     private ArrayTaskList tasks;
 
+    private static final Logger log = Logger.getLogger(TasksService.class.getName());
+
     public TasksService(ArrayTaskList tasks){
         this.tasks = tasks;
     }
@@ -19,6 +22,41 @@ public class TasksService {
     public ObservableList<Task> getObservableList(){
         return FXCollections.observableArrayList(tasks.getAll());
     }
+
+    public void addTask(Task task) {
+        if (task.getTitle() == null) {
+            log.error("title is null");
+            throw new IllegalArgumentException("Title cannot be null");
+        }
+        if (task.getTitle().isEmpty()) {
+            log.error("title is empty");
+            throw new IllegalArgumentException("Title cannot be empty");
+        }
+        if (task.getStartTime() == null) {
+            log.error("start time is null");
+            throw new IllegalArgumentException("Start time cannot be null");
+        }
+        if (task.getStartTime().getTime() < 0) {
+            log.error("start time below bound");
+            throw new IllegalArgumentException("Start time cannot be negative");
+        }
+        if (task.getEndTime() != null) {
+            if (task.getEndTime().getTime() < 0) {
+                log.error("end time below bound");
+                throw new IllegalArgumentException("End time cannot be negative");
+            }
+            if (task.getStartTime().getTime() >= task.getEndTime().getTime()) {
+                log.error("start time greater than end time");
+                throw new IllegalArgumentException("Start time cannot be greater than end time");
+            }
+            if (task.getRepeatInterval() < 1) {
+                log.error("interval < than 1");
+                throw new IllegalArgumentException("interval should me > 1");
+            }
+        }
+        tasks.add(task);
+    }
+
     public String getIntervalInHours(Task task){
         int seconds = task.getRepeatInterval();
         int minutes = seconds / DateService.SECONDS_IN_MINUTE;

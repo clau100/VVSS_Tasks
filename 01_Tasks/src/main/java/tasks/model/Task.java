@@ -32,14 +32,6 @@ public class Task implements Serializable, Cloneable {
         this.end = time;
     }
     public Task(String title, Date start, Date end, int interval){
-        if (start.getTime() < 0 || end.getTime() < 0) {
-            log.error("time below bound");
-            throw new IllegalArgumentException("Time cannot be negative");
-        }
-        if (interval < 1) {
-            log.error("interval < than 1");
-            throw new IllegalArgumentException("interval should me > 1");
-        }
         this.title = title;
         this.start = start;
         this.end = end;
