@@ -1,150 +1,157 @@
 package tasks.services;
 
 import javafx.collections.ObservableList;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import tasks.model.ArrayTaskList;
 import tasks.model.Task;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class TaskIOTest {
+    @Nested
+    @DisplayName("Tests for adding tasks")
+    class AddTaskTest {
+        private ObservableList<Task> tasks;
+        private TasksService service;
 
-    private ObservableList<Task> tasks;
+        @BeforeEach
+        void setUp() {
+            ArrayTaskList taskList = new ArrayTaskList();
+            service = new TasksService(taskList);
+            tasks = service.getObservableList();
+        }
 
-    @BeforeEach
-    void setUp() {
-        ArrayTaskList taskList = new ArrayTaskList();
-        TasksService service = new TasksService(taskList);
-        tasks = service.getObservableList();
-    }
+        @AfterEach
+        void tearDown() {
+            tasks.clear();
+        }
 
-    @AfterEach
-    void tearDown() {
-        tasks.clear();
-    }
+        private static Date getDate(int year, int month, int day) {
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.YEAR, year);
+            cal.set(Calendar.MONTH, month - 1);
+            cal.set(Calendar.DAY_OF_MONTH, day);
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+            return cal.getTime();
+        }
 
-    // ----------------------------- ECP Tests -----------------------------
+        // ----------------------------- ECP Tests -----------------------------
 
-    @Test
-    @DisplayName("EC1 - Valid title (String)")
-    void testEC1_ValidTitle() {
-        Task task = new Task("Movie Title", new Date());
-        task.setActive(true);
-        tasks.add(task);
-        assertEquals(1, tasks.size());
-    }
+        static Stream<Arguments> taskProviderValidECP() {
+            return Stream.of(
+                    Arguments.of("Meeting", getDate(2025, 4, 5), getDate(2025, 4, 6), 30, true),
+                    Arguments.of("Hello world", getDate(2025, 4, 10), getDate(2025, 4, 11), 30, false)
+            );
+        }
 
-    @Test
-    @DisplayName("EC1 - Invalid title (empty string)")
-    void testEC1_InvalidTitle() {
-        Exception ex = assertThrows(IllegalArgumentException.class, () -> {
-            Task task = new Task("", new Date());
-            task.setActive(true);
-            tasks.add(task);
-        });
-        assertTrue(ex.getMessage().toLowerCase().contains("title")); // în funcție de implementare
-        assertEquals(0, tasks.size());
-    }
+        static Stream<Arguments> taskProviderNevalidECP() {
+            return Stream.of(
+                    Arguments.of(null, getDate(2025, 4, 5), getDate(2025, 4, 6), 30, true),
+                    Arguments.of("Hello", null, getDate(2025, 4, 6), 30, true)
+            );
+        }
 
-    @Test
-    @DisplayName("EC3 - Valid director (String)")
-    void testEC3_ValidDirector() {
-        Task task = new Task("Movie Title", new Date());
-        task.setTitle("Director Name"); // presupunem că titlul este și regizor, în lipsa unui atribut clar separat
-        task.setActive(true);
-        tasks.add(task);
-        assertEquals(1, tasks.size());
-    }
+        @ParameterizedTest
+        @Tag("addTask")
+        @Tag("ecp")
+        @DisplayName("ECP1 și ECP2 - Teste valide")
+        @MethodSource("taskProviderValidECP")
+        void testECP_Valid(String title, Date start, Date end, int interval, boolean active) {
+            Task task = new Task(title, start, end, interval);
+            task.setActive(active);
+            int currentSize = service.getObservableList().size();
+            service.addTask(task);
+            int newSize = service.getObservableList().size();
+            assertEquals(newSize, currentSize + 1);
+            assertEquals(title, service.getObservableList().get(newSize - 1).getTitle());
+            assertEquals(start, service.getObservableList().get(newSize - 1).getStartTime());
+            assertEquals(end, service.getObservableList().get(newSize - 1).getEndTime());
+            assertEquals(interval, service.getObservableList().get(newSize - 1).getRepeatInterval());
+            assertEquals(active, service.getObservableList().get(newSize - 1).isActive());
+        }
 
-    @Test
-    @DisplayName("EC4 - Invalid director (null)")
-    void testEC4_InvalidDirector() {
-        Exception ex = assertThrows(IllegalArgumentException.class, () -> {
-            Task task = new Task(null, new Date());
-            task.setActive(true);
-            tasks.add(task);
-        });
-        assertTrue(ex.getMessage().toLowerCase().contains("title")); // sau "null"
-        assertEquals(0, tasks.size());
-    }
+        @ParameterizedTest
+        @Tag("addTask")
+        @Tag("ecp")
+        @DisplayName("ECP3 și ECP4 - Teste nevalide")
+        @MethodSource("taskProviderNevalidECP")
+        void testECP_Nevalid(String title, Date start, Date end, int interval, boolean active) {
+            Task task = new Task(title, start, end, interval);
+            task.setActive(active);
+            Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+                service.addTask(task);
+            });
+            if (title == null) {
+                assertEquals("Title cannot be null", exception.getMessage());
+            }
+            if (start == null) {
+                assertEquals("Start time cannot be null", exception.getMessage());
+            }
+        }
 
-    @Test
-    @DisplayName("EC5 - Valid appearance year (number)")
-    void testEC5_ValidYear() {
-        Task task = new Task("Film 2020", new Date(124, 4, 5));
-        task.setActive(true);
-        tasks.add(task);
-        assertEquals(1, tasks.size());
-    }
+        // ----------------------------- BVA Tests -----------------------------
 
-    @Test
-    @DisplayName("EC6 - Invalid appearance year (non-numeric, simulated)")
-    void testEC6_InvalidYearNonNumeric() {
-        // Java nu permite non-numeric la Date, dar simulăm o valoare greșită (ex: null)
-        Exception ex = assertThrows(IllegalArgumentException.class, () -> {
-            new Task("Invalid Date Task", null);
-        });
-        assertEquals(0, tasks.size());
-    }
+        static Stream<Arguments> taskProviderValidBVA() {
+            return Stream.of(
+                    Arguments.of("Meeting", getDate(2025, 4, 5), getDate(2025, 4, 6), 30, true),
+                    Arguments.of("Hello world", getDate(2025, 4, 10), getDate(2025, 4, 11), 30, false)
+            );
+        }
 
-    @Test
-    @DisplayName("EC7 - Invalid year (before 1900)")
-    void testEC7_YearBefore1900() {
-        Date dateBefore1900 = new Date(-2208988800000L); // 1 Jan 1900
-        Exception ex = assertThrows(IllegalArgumentException.class, () -> {
-            Task task = new Task("Old Movie", dateBefore1900);
-            task.setActive(true);
-            tasks.add(task);
-        });
-        assertEquals(0, tasks.size());
-    }
+        static Stream<Arguments> taskProviderNevalidBVA() {
+            return Stream.of(
+                    Arguments.of("", getDate(2025, 4, 5), getDate(2025, 4, 6), 30, true),
+                    Arguments.of("Hello world", getDate(2025, 4, 9), getDate(2025, 4, 6), 30, true)
+            );
+        }
 
-    // ----------------------------- BVA Tests -----------------------------
+        @ParameterizedTest
+        @Tag("addTask")
+        @Tag("bva")
+        @DisplayName("BVA1 și BVA2 - Teste valide")
+        @MethodSource("taskProviderValidBVA")
+        void testBVA_Valid(String title, Date start, Date end, int interval, boolean active) {
+            Task task = new Task(title, start, end, interval);
+            task.setActive(active);
+            int currentSize = service.getObservableList().size();
+            service.addTask(task);
+            int newSize = service.getObservableList().size();
+            assertEquals(newSize, currentSize + 1);
+            assertEquals(title, service.getObservableList().get(newSize - 1).getTitle());
+            assertEquals(start, service.getObservableList().get(newSize - 1).getStartTime());
+            assertEquals(end, service.getObservableList().get(newSize - 1).getEndTime());
+            assertEquals(interval, service.getObservableList().get(newSize - 1).getRepeatInterval());
+            assertEquals(active, service.getObservableList().get(newSize - 1).isActive());
+        }
 
-    @Test
-    @DisplayName("BVA1 - Valid boundary date (Epoch)")
-    void testBVA_ValidEpochStart() {
-        Task task = new Task("Epoch Task", new Date(0), new Date(1), 1);
-        task.setActive(true);
-        tasks.add(task);
-        assertEquals(1, tasks.size());
-    }
-
-    @Test
-    @DisplayName("BVA2 - Invalid date < 0 (negative time)")
-    void testBVA_InvalidNegativeTime() {
-        Exception ex = assertThrows(IllegalArgumentException.class, () -> {
-            Task task = new Task("Negative Time", new Date(-1), new Date(1), 1);
-            task.setActive(true);
-            tasks.add(task);
-        });
-        assertTrue(ex.getMessage().contains("Time cannot be negative"));
-        assertEquals(0, tasks.size());
-    }
-
-    @Test
-    @DisplayName("BVA3 - Invalid repeat interval = 0")
-    void testBVA_InvalidIntervalZero() {
-        Exception ex = assertThrows(IllegalArgumentException.class, () -> {
-            Task task = new Task("Repeat Task", new Date(), new Date(System.currentTimeMillis() + 10000), 0);
-            task.setActive(true);
-            tasks.add(task);
-        });
-        assertEquals("interval should me > 1", ex.getMessage());
-        assertEquals(0, tasks.size());
-    }
-
-    @Test
-    @DisplayName("BVA4 - Valid repeat interval = 1 (minimum valid)")
-    void testBVA_ValidIntervalMin() {
-        Task task = new Task("Repeat OK", new Date(), new Date(System.currentTimeMillis() + 10000), 1);
-        task.setActive(true);
-        tasks.add(task);
-        assertEquals(1, tasks.size());
+        @ParameterizedTest
+        @Tag("addTask")
+        @Tag("bva")
+        @DisplayName("BVA3 și BVA4 - Teste nevalide")
+        @MethodSource("taskProviderNevalidBVA")
+        void testBVA_Nevalid(String title, Date start, Date end, int interval, boolean active) {
+            Task task = new Task(title, start, end, interval);
+            task.setActive(active);
+            Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+                service.addTask(task);
+            });
+            if (title.isEmpty()) {
+                assertEquals("Title cannot be empty", exception.getMessage());
+            }
+            if (start.getTime() > end.getTime()) {
+                assertEquals("Start time cannot be greater than end time", exception.getMessage());
+            }
+        }
     }
 }
