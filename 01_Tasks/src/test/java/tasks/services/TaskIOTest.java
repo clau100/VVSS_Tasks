@@ -104,8 +104,9 @@ class TaskIOTest {
 
         static Stream<Arguments> taskProviderValidBVA() {
             return Stream.of(
-                    Arguments.of("Meeting", getDate(2025, 4, 5), getDate(2025, 4, 6), 30, true),
-                    Arguments.of("Hello world", getDate(2025, 4, 10), getDate(2025, 4, 11), 30, false)
+                    Arguments.of("M", getDate(2025, 4, 5), getDate(2025, 4, 6), 30, true),
+                    Arguments.of("Hello world", getDate(2025, 4, 10), getDate(2025, 4, 11), 30, false),
+                    Arguments.of("Hello world", getDate(2025, 4, 9), getDate(2025, 4, 9), 30, true)
             );
         }
 

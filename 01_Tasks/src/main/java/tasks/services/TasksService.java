@@ -45,7 +45,7 @@ public class TasksService {
                 log.error("end time below bound");
                 throw new IllegalArgumentException("End time cannot be negative");
             }
-            if (task.getStartTime().getTime() >= task.getEndTime().getTime()) {
+            if (task.getStartTime().getTime() > task.getEndTime().getTime()) {
                 log.error("start time greater than end time");
                 throw new IllegalArgumentException("Start time cannot be greater than end time");
             }
