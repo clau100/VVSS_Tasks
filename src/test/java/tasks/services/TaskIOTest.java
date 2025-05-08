@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class TaskIOTest {
     @Nested
     @DisplayName("Tests for adding tasks")
-    class AddTaskTest {
+    static class AddTaskTest {
         private ObservableList<Task> tasks;
         private TasksService service;
 
