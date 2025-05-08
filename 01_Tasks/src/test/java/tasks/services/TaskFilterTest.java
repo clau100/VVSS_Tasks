@@ -46,8 +46,6 @@ class TaskFilterTest {
         return cal.getTime();
     }
 
-    // ----------------------------- ECP Tests -----------------------------
-
     static Stream<Arguments> taskProviderEmpty() {
         return Stream.of(
             Arguments.of(
