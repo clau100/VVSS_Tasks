@@ -31,12 +31,33 @@ public class Task implements Serializable, Cloneable {
         this.start = time;
         this.end = time;
     }
+
+    public Task(String title, Date time, boolean active) {
+        if (time.getTime() < 0) {
+            log.error("time below bound");
+            throw new IllegalArgumentException("Time cannot be negative");
+        }
+        this.title = title;
+        this.time = time;
+        this.start = time;
+        this.end = time;
+        this.active = active;
+    }
     public Task(String title, Date start, Date end, int interval){
         this.title = title;
         this.start = start;
         this.end = end;
         this.interval = interval;
         this.time = start;
+    }
+
+    public Task(String title, Date start, Date end, int interval, boolean active) {
+        this.title = title;
+        this.start = start;
+        this.end = end;
+        this.interval = interval;
+        this.time = start;
+        this.active = active;
     }
 
     public String getTitle() {

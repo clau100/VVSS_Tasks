@@ -7,6 +7,7 @@ import tasks.model.ArrayTaskList;
 import tasks.model.Task;
 import tasks.model.TasksOperations;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class TasksService {
@@ -89,4 +90,37 @@ public class TasksService {
 
         return filtered;
     }
+
+    public void setNewTaskList(ObservableList<Task> tasksList) {
+    }
+
+//    public Iterable<Task> filterTasks(DateService dateService, LocalDate fromDate, LocalDate toDate, String fromTime, String toTime) throws IllegalArgumentException {
+//        if (fromDate == null || toDate == null) {
+//            log.error("Date pickers are empty");
+//            throw new IllegalArgumentException("Date values cannot be null");
+//        }
+//        Date start = getDateFromFilterField(dateService, fromDate, fromTime);
+//        Date end = getDateFromFilterField(dateService, toDate, toTime);
+//        if (start == null || end == null) {
+//            log.error("Failed to filter because of invalid input");
+//            throw new IllegalArgumentException("Failed to filter because of invalid input");
+//        }
+//
+//        TasksOperations tasksOps = new TasksOperations(getObservableList());
+//        Iterable<Task> filtered = tasksOps.incoming(start, end);
+//
+//        return filtered;
+//    }
+//
+//    private Date getDateFromFilterField(DateService dateService, LocalDate localDate, String time){
+//        Date date = dateService.getDateValueFromLocalDate(localDate);
+//        try {
+//            Date finalDate = dateService.getDateMergedWithTime(time, date);
+//            return finalDate;
+//        }
+//        catch (IllegalArgumentException e) {
+//            log.error(e);
+//        }
+//        return null;
+//    }
 }
