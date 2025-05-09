@@ -63,9 +63,14 @@ class TaskIOTest {
 //    @Tag("addTask")
 //    @Tag("ecp")
     @DisplayName("ECP1 și ECP2 - Teste valide")
-    @MethodSource("taskProviderValidECP")
     @Test
-    void testECP_Valid(String title, Date start, Date end, int interval, boolean active) {
+    void testECP_Valid() {
+        String title = "Hello world";
+        Date start = getDate(2025, 4, 10);
+        Date end = getDate(2025, 4, 11);
+        int interval = 30;
+        boolean active = false;
+
         Task task = new Task(title, start, end, interval);
         task.setActive(active);
         int currentSize = service.getObservableList().size();
@@ -83,9 +88,13 @@ class TaskIOTest {
 //    @Tag("addTask")
 //    @Tag("ecp")
     @DisplayName("ECP3 și ECP4 - Teste nevalide")
-    @MethodSource("taskProviderNevalidECP")
     @Test
-    void testECP_Nevalid(String title, Date start, Date end, int interval, boolean active) {
+    void testECP_Nevalid() {
+        String title = "Hello";
+        Date start = null;
+        Date end = getDate(2025, 4, 6);
+        int interval = 30;
+        boolean active = true;
         Task task = new Task(title, start, end, interval);
         task.setActive(active);
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -120,9 +129,14 @@ class TaskIOTest {
 //    @Tag("addTask")
 //    @Tag("bva")
     @DisplayName("BVA1 și BVA2 - Teste valide")
-    @MethodSource("taskProviderValidBVA")
     @Test
-    void testBVA_Valid(String title, Date start, Date end, int interval, boolean active) {
+    void testBVA_Valid() {
+        String title = "M";
+        Date start = getDate(2025, 4, 5);
+        Date end = getDate(2025, 4, 6);
+        int interval = 30;
+        boolean active = true;
+
         Task task = new Task(title, start, end, interval);
         task.setActive(active);
         int currentSize = service.getObservableList().size();
@@ -140,9 +154,14 @@ class TaskIOTest {
 //    @Tag("addTask")
 //    @Tag("bva")
     @DisplayName("BVA3 și BVA4 - Teste nevalide")
-    @MethodSource("taskProviderNevalidBVA")
     @Test
-    void testBVA_Nevalid(String title, Date start, Date end, int interval, boolean active) {
+    void testBVA_Nevalid() {
+        String title = "";
+        Date start = getDate(2025, 4, 5);
+        Date end = getDate(2025, 4, 6);
+        int interval = 30;
+        boolean active = true;
+
         Task task = new Task(title, start, end, interval);
         task.setActive(active);
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {

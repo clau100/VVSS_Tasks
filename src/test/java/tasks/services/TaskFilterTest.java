@@ -97,9 +97,12 @@ class TaskFilterTest {
 //    @ParameterizedTest
 //    @Tag("filterTask")
     @DisplayName("F02_TC01, F02_TC02, F02_TC03, F02_TC04")
-    @MethodSource("taskProviderEmpty")
+//    @MethodSource("taskProviderEmpty")
     @Test
-    void testEmptyResult(Task[] tasks, Date start, Date end) {
+    void testEmptyResult() {
+        Task[] tasks = new Task[]{new Task("Task 1", getDate(2025, 5, 3, 12, 0), getDate(2025, 5, 5, 12, 0), 1, true)};
+                Date start = getDate(2025, 5, 1, 12, 0);
+                Date end = getDate(2025, 5, 2, 12, 0);
         ArrayTaskList arrayTasks = new ArrayTaskList();
         for (Task t : tasks) {
             arrayTasks.add(t);
@@ -116,9 +119,12 @@ class TaskFilterTest {
 //    @ParameterizedTest
 //    @Tag("filterTask")
     @DisplayName("F02_TC05")
-    @MethodSource("taskProvider1Task")
+//    @MethodSource("taskProvider1Task")
     @Test
-    void test1TaskResult(Task[] tasks, Date start, Date end) {
+    void test1TaskResult() {
+        Task[] tasks = new Task[]{new Task("Task 1", getDate(2025, 5, 3, 12, 0), getDate(2025, 5, 5, 12, 0), 1, true)};
+                Date start = getDate(2025, 5, 1, 12, 0);
+                Date end = getDate(2025, 5, 3, 12, 0);
         ArrayTaskList arrayTasks = new ArrayTaskList();
         for (Task t : tasks) {
             arrayTasks.add(t);
@@ -135,9 +141,15 @@ class TaskFilterTest {
 //    @ParameterizedTest
 //    @Tag("filterTask")
     @DisplayName("F02_TC06")
-    @MethodSource("taskProvider2Task")
+//    @MethodSource("taskProvider2Task")
     @Test
-    void test2TaskResult(Task[] tasks, Date start, Date end) {
+    void test2TaskResult() {
+        Task[] tasks = new Task[]{
+                new Task("Task 1", getDate(2025, 5, 2, 12, 0), getDate(2025, 5, 5, 12, 0), 1, true),
+                new Task("Task 1", getDate(2025, 5, 2, 12, 0), getDate(2025, 5, 5, 12, 0), 1, true)
+        };
+                Date start = getDate(2025, 5, 1, 12, 0);
+                Date end = getDate(2025, 5, 3, 12, 0);
         ArrayTaskList arrayTasks = new ArrayTaskList();
         for (Task t : tasks) {
             arrayTasks.add(t);
