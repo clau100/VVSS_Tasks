@@ -94,10 +94,11 @@ class TaskFilterTest {
         );
     }
 
-    @ParameterizedTest
-    @Tag("filterTask")
+//    @ParameterizedTest
+//    @Tag("filterTask")
     @DisplayName("F02_TC01, F02_TC02, F02_TC03, F02_TC04")
     @MethodSource("taskProviderEmpty")
+    @Test
     void testEmptyResult(Task[] tasks, Date start, Date end) {
         ArrayTaskList arrayTasks = new ArrayTaskList();
         for (Task t : tasks) {
@@ -112,10 +113,11 @@ class TaskFilterTest {
         assertEquals(0, count);
     }
 
-    @ParameterizedTest
-    @Tag("filterTask")
+//    @ParameterizedTest
+//    @Tag("filterTask")
     @DisplayName("F02_TC05")
     @MethodSource("taskProvider1Task")
+    @Test
     void test1TaskResult(Task[] tasks, Date start, Date end) {
         ArrayTaskList arrayTasks = new ArrayTaskList();
         for (Task t : tasks) {
@@ -130,10 +132,11 @@ class TaskFilterTest {
         assertEquals(1, count);
     }
 
-    @ParameterizedTest
-    @Tag("filterTask")
+//    @ParameterizedTest
+//    @Tag("filterTask")
     @DisplayName("F02_TC06")
     @MethodSource("taskProvider2Task")
+    @Test
     void test2TaskResult(Task[] tasks, Date start, Date end) {
         ArrayTaskList arrayTasks = new ArrayTaskList();
         for (Task t : tasks) {

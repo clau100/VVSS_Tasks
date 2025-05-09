@@ -59,11 +59,12 @@ class TaskIOTest {
         );
     }
 
-    @ParameterizedTest
-    @Tag("addTask")
-    @Tag("ecp")
+//    @ParameterizedTest
+//    @Tag("addTask")
+//    @Tag("ecp")
     @DisplayName("ECP1 și ECP2 - Teste valide")
     @MethodSource("taskProviderValidECP")
+    @Test
     void testECP_Valid(String title, Date start, Date end, int interval, boolean active) {
         Task task = new Task(title, start, end, interval);
         task.setActive(active);
@@ -78,11 +79,12 @@ class TaskIOTest {
         assertEquals(active, service.getObservableList().get(newSize - 1).isActive());
     }
 
-    @ParameterizedTest
-    @Tag("addTask")
-    @Tag("ecp")
+//    @ParameterizedTest
+//    @Tag("addTask")
+//    @Tag("ecp")
     @DisplayName("ECP3 și ECP4 - Teste nevalide")
     @MethodSource("taskProviderNevalidECP")
+    @Test
     void testECP_Nevalid(String title, Date start, Date end, int interval, boolean active) {
         Task task = new Task(title, start, end, interval);
         task.setActive(active);
@@ -114,11 +116,12 @@ class TaskIOTest {
         );
     }
 
-    @ParameterizedTest
-    @Tag("addTask")
-    @Tag("bva")
+//    @ParameterizedTest
+//    @Tag("addTask")
+//    @Tag("bva")
     @DisplayName("BVA1 și BVA2 - Teste valide")
     @MethodSource("taskProviderValidBVA")
+    @Test
     void testBVA_Valid(String title, Date start, Date end, int interval, boolean active) {
         Task task = new Task(title, start, end, interval);
         task.setActive(active);
@@ -133,11 +136,12 @@ class TaskIOTest {
         assertEquals(active, service.getObservableList().get(newSize - 1).isActive());
     }
 
-    @ParameterizedTest
-    @Tag("addTask")
-    @Tag("bva")
+//    @ParameterizedTest
+//    @Tag("addTask")
+//    @Tag("bva")
     @DisplayName("BVA3 și BVA4 - Teste nevalide")
     @MethodSource("taskProviderNevalidBVA")
+    @Test
     void testBVA_Nevalid(String title, Date start, Date end, int interval, boolean active) {
         Task task = new Task(title, start, end, interval);
         task.setActive(active);
