@@ -48,4 +48,17 @@ public class ServiceTestMockito {
         assertEquals(realTask, realList.getTask(0));
     }
 
+    @Test
+    void testWithMockRepoTask() {
+        ArrayTaskList mockRepo = Mockito.mock(ArrayTaskList.class);
+        Task mockTask = Mockito.mock(Task.class);
+
+        TasksService service = new TasksService(mockRepo);
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            service.addTask(mockTask);
+        });
+        assertEquals("Title cannot be null", exception.getMessage());
+    }
+
 }
